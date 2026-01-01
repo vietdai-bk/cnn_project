@@ -16,8 +16,8 @@ class SimpleModel(nn.Module):
         x = self.conv2(x) # [B, 64, 3, 3]
         x = F.relu(x)
         x = self.pool(x) # [B, 64, 1, 1]
-        x = x.view(x.size(0), -1) # [B, 64 * 1 * 1]
-        x = self.fc1(x) # [64 * 1 * 1, 128]
+        x = x.view(x.size(0), -1) # [B, 64]
+        x = self.fc1(x) # [64, 128]
         x = F.relu(x)
         x = self.fc2(x) # [128, 10] => 10 class 0 -> 9
         return x
