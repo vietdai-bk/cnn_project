@@ -1,0 +1,7 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+mnist_dataset/*
+_pycache_/
+pixi.lock
+models/

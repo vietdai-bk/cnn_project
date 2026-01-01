@@ -1,0 +1,25 @@
+[project]
+authors = [{name = "vietdai-bk", email = "daithai540@gmail.com"}]
+dependencies = []
+name = "cnn_project"
+requires-python = ">= 3.11"
+version = "0.1.0"
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["win-64"]
+
+[tool.pixi.pypi-dependencies]
+cnn_project = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+python = "==3.11"
+numpy = ">=2.4.0,<3"
+matplotlib = ">=3.10.8,<4"
+scikit-learn = ">=1.8.0,<2"
