@@ -1,4 +1,4 @@
-from utils import accuracy, conf_matrix
+from utils import metric
 from datasets import MyDataset
 from torch.utils.data import DataLoader
 from models import SimpleModel
@@ -23,14 +23,19 @@ test_loader = DataLoader(test_data, batch_size=args.batch_size)
 
 model = SimpleModel()
 model.eval()
-model.load_state_dict(torch.load(args.model_path, map_location=device))
+model.load_state_dict(torch.load(args.model_path, map_location=device, weights_only=True))
 model.to(device)
 
+accuracy, cf, report = metric(model, test_loader)
+print(report)
 if args.acc:
-    accuracy(model, test_loader)
+    print(f"Accuracy: {accuracy:.2f}")
 if args.cfm:
-    cf = conf_matrix(model, test_loader)
-    sb.heatmap(cf, annot=True, fmt="d", cmap="Blues")
+    sb.heatmap(cf, annot=True, fmt="d", cmap="Blues", xticklabels=range(10),
+    yticklabels=range(10))
+    plt.xlabel("Pred")
+    plt.ylabel("Label")
+    plt.title("Confusion Matrix")
     plt.show()
 
 # run: python test.py --test_data ../../mnist_dataset/trainingSet --model_path checkpoints/SimpleModel.pt --acc --cfm
