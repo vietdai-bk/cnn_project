@@ -11,6 +11,42 @@ The project is designed to be **simple, clean, and easy to extend**, suitable fo
 
 ---
 
+## Model Architecture
+
+The model architecture is summarized using **torchsummary**, showing layer-wise output shapes and parameter counts.
+
+*Model summary generated using torchsummary (input size: 1 × 28 × 28).*
+
+```text
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1           [-1, 32, 28, 28]             320
+       BatchNorm2d-2           [-1, 32, 28, 28]              64
+              ReLU-3           [-1, 32, 28, 28]               0
+         MaxPool2d-4           [-1, 32, 14, 14]               0
+         ConvBlock-5           [-1, 32, 14, 14]               0
+            Conv2d-6           [-1, 64, 14, 14]          18,496
+       BatchNorm2d-7           [-1, 64, 14, 14]             128
+              ReLU-8           [-1, 64, 14, 14]               0
+         MaxPool2d-9             [-1, 64, 7, 7]               0
+        ConvBlock-10             [-1, 64, 7, 7]               0
+          Dropout-11                 [-1, 3136]               0
+           Linear-12                   [-1, 10]          31,370
+================================================================
+Total params: 50,378
+Trainable params: 50,378
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.00
+Forward/backward pass size (MB): 1.03
+Params size (MB): 0.19
+Estimated Total Size (MB): 1.22
+----------------------------------------------------------------
+```
+
+---
+
 ## Dataset Structure
 
 The dataset should be organized in a **folder-per-class** format:
