@@ -1,20 +1,22 @@
 import torch
-from data import MyDataset
-from visualization import show_data
-from model import SimpleModel
+from datasets import MyDataset
+from models import SimpleModel
 from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 import torch.nn as nn
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
-import seaborn as sb
-import matplotlib.pyplot as plt
+import argparse
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
-data_dir = "../../mnist_dataset/trainingSet"
-dataset = MyDataset(data_dir)
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", type=str)
+parser.add_argument("--batch_size", type=int, default=32)
+parser.add_argument("--checkpoint_folder", type=str, default="checkpoints")
+parser.add_argument("--lr", type=float, default=1e-3)
+parser.add_argument("--epoch", type=int, default=10)
+parser.add_argument("--SGD", action="store_true")
 
 def split_data(dataset, test_size=0.2):
     indices = list(range(len(dataset)))
@@ -31,12 +33,8 @@ def split_data(dataset, test_size=0.2):
 
     return train_data, test_data
 
-train_data, test_data = split_data(dataset)
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_data, batch_size=32)
 
 def train(model, train_loader, loss_function, optimizer, epoch):
-    model.train()
     total_loss = 0
     correct = 0
     total = 0
@@ -65,8 +63,6 @@ def valid(model, test_loader):
     model.eval()
     correct = 0
     total = 0
-    all_pred = []
-    all_true = []
     
     with torch.no_grad():
         with tqdm(test_loader, desc="Validate") as tbar:
@@ -76,32 +72,30 @@ def valid(model, test_loader):
                 pred = y_pred.argmax(dim=1)
                 correct += (pred == label).sum().item()
                 total += label.size(0)
-                all_pred.extend(pred.cpu().numpy().flatten())
-                all_true.extend(label.cpu().numpy().flatten())
 
     print(f"Accuracy: {correct/total:.2f}")
-    return all_pred, all_true
 
-# show_data(train_data)
+args = parser.parse_args()
+
+dataset = MyDataset(args.dataset)
+
+train_data, test_data = split_data(dataset)
+train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
+test_loader = DataLoader(test_data, batch_size=args.batch_size)
+
 model = SimpleModel()
 model.to(device)
-model.train()
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
+if args.SGD:
+    optimizer = optim.SGD(model.parameters(), lr=args.lr)
+else:
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 loss_function = nn.CrossEntropyLoss()
 
-# for epoch in range(10):
-#     train(model, train_loader, loss_function, optimizer, epoch+1)
+for epoch in range(args.epoch):
+    train(model, train_loader, loss_function, optimizer, epoch+1)
 
-# torch.save(model.state_dict(), 'models/SimpleModel.pt')
+torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
 
-# Validate
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# model = SimpleModel()
-model_path = 'models/SimpleModel.pt'
-model.load_state_dict(torch.load(model_path, map_location=device))
-model.eval()
-model.to(device)
-pred, label = valid(model, test_loader)
-cf = confusion_matrix(label, pred)
-sb.heatmap(cf, annot=True, fmt="d", cmap="Blues")
-plt.show()
+valid(model, test_loader)
+
+# run: python train.py --dataset ../../mnist_dataset/trainingSet  --epoch 5 --batch_size 64 --lr 1e-4 --SGD

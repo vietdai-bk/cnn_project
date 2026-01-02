@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from inference import infer
 
 def show_data(data):
     fig, axis = plt.subplots(1, 10, figsize=(10, 4))
@@ -11,3 +10,4 @@ def show_data(data):
         axis[i].grid(False)
         axis[i].axis('off')
     plt.show()
+

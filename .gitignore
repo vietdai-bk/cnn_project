@@ -2,6 +2,8 @@
 .pixi/*
 !.pixi/config.toml
 mnist_dataset/*
-_pycache_/
+__pycache__/
+*.pyc
+*.pyo
 pixi.lock
 models/
