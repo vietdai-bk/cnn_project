@@ -1,6 +1,6 @@
 import torch
 from datasets import MyDataset
-from models import SimpleModel
+from models import SimpleModel, ShuffleNet
 from utils import show_data
 from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
@@ -10,6 +10,7 @@ from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import argparse
 import matplotlib.pyplot as plt
+from torchsummary import summary
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
@@ -18,9 +19,10 @@ parser.add_argument("--dataset", type=str)
 parser.add_argument("--batch_size", type=int, default=32)
 parser.add_argument("--checkpoint_folder", type=str, default="checkpoints")
 parser.add_argument("--lr", type=float, default=1e-3)
+parser.add_argument("--num_classes", type=int, default=10)
 parser.add_argument("--agm", action="store_true")
 parser.add_argument("--epoch", type=int, default=10)
-parser.add_argument("--SGD", action="store_true")
+parser.add_argument("--pretrained", action="store_true")
 
 def split_data(dataset, test_size=0.2):
     indices = list(range(len(dataset)))
@@ -88,11 +90,8 @@ args = parser.parse_args()
 
 if args.agm:
     transform = transforms.Compose([
-        transforms.RandomAffine(
-            degrees=10,
-            translate=(0.1, 0.1),
-            scale=(0.9, 1.1)
-        ),
+        transforms.Resize((224,224)),
+        transforms.ToTensor(),
     ])
 else:
     transform = None
@@ -106,24 +105,66 @@ in_c = train_data[0][0].shape[0]
 train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=args.batch_size)
 
-model = SimpleModel(in_c=in_c)
+if args.pretrained:
+    model = ShuffleNet(in_c=in_c, num_classes=args.num_classes)
+    for p in model.backbone.parameters():
+        p.requires_grad = False
+    for p in model.backbone.conv1.parameters():
+        p.requires_grad = True
+    for p in model.backbone.fc.parameters():
+        p.requires_grad = True
+else:
+    model = SimpleModel(in_c=in_c, num_classes=args.num_classes)
+
 model.to(device)
-if args.SGD:
-    optimizer = optim.SGD(model.parameters(), lr=args.lr)
+
+summary(model, input_size=(in_c, 224, 224))
+
+if args.pretrained:
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr)
 else:
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 loss_function = nn.CrossEntropyLoss()
 
-cost_loss = []
-
+all_cost_loss = []
+all_cost_acc = []
 for epoch in range(args.epoch):
     cost_loss, cost_acc = train(model, train_loader, loss_function, optimizer, epoch+1)
 
-torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
+all_cost_loss.extend(cost_loss)
+all_cost_acc.extend(cost_acc)
+cost_loss = []
+cost_acc = []
 
-# plt.plot(cost_acc)
-# plt.savefig('acc_map.png')
-# plt.show()
+if args.pretrained:
+    for p in model.backbone.parameters():
+        p.requires_grad = True
+
+    optimizer = optim.Adam(
+        model.parameters(),
+        lr=args.lr * 1e-1
+    )
+    
+    for epoch in range(10):
+        cost_loss, cost_acc = train(model, train_loader, loss_function, optimizer, epoch+1)
+    all_cost_loss.extend(cost_loss)
+    all_cost_acc.extend(cost_acc)
+    torch.save(model.state_dict(),f'{args.checkpoint_folder}/ShuffleNet.pt')
+else:
+    torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
+
+plt.plot(all_cost_loss)
+plt.title("Loss Map")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.savefig('loss_map_with_petrained.png')
+plt.show()
+plt.plot(all_cost_acc)
+plt.title("Accuracy Map")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.savefig('acc_map_with_pretrained.png')
+plt.show()
 
 valid(model, test_loader)
 
