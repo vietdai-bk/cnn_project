@@ -9,6 +9,7 @@ from torchvision import transforms
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import argparse
+import matplotlib.pyplot as plt
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(device)
@@ -36,6 +37,8 @@ def split_data(dataset, test_size=0.2):
 
     return train_data, test_data
 
+cost_loss = []
+cost_acc = []
 
 def train(model, train_loader, loss_function, optimizer, epoch):
     total_loss = 0
@@ -61,6 +64,9 @@ def train(model, train_loader, loss_function, optimizer, epoch):
                 "Loss": f"{total_loss:.2f}",
                 "Acc": f"{correct/total:.4f}"
             })
+        cost_acc.append(correct/total)
+        cost_loss.append(total_loss)
+    return cost_loss, cost_acc
 
 def valid(model, test_loader):
     model.eval()
@@ -95,8 +101,8 @@ dataset = MyDataset(args.dataset, transform=transform)
 
 train_data, test_data = split_data(dataset)
 in_c = train_data[0][0].shape[0]
-show_data(train_data)
-show_data(test_data)
+# show_data(train_data)
+# show_data(test_data)
 train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=args.batch_size)
 
@@ -108,10 +114,16 @@ else:
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 loss_function = nn.CrossEntropyLoss()
 
+cost_loss = []
+
 for epoch in range(args.epoch):
-    train(model, train_loader, loss_function, optimizer, epoch+1)
+    cost_loss, cost_acc = train(model, train_loader, loss_function, optimizer, epoch+1)
 
 torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
+
+# plt.plot(cost_acc)
+# plt.savefig('acc_map.png')
+# plt.show()
 
 valid(model, test_loader)
 
