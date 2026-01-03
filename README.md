@@ -18,8 +18,8 @@ Result training with MNIST
 Result training with Fruits datasets
 | Models | Loss | Accuracy |
 |--------|------|-------------|
-|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map_no_pretrained.png) | ![](src/cnn_project/assets/acc_map_no_pretrained.png) |
-|ShuffleNetMNIST (ShuffleNet pretrained)| ![](src/cnn_project/assets/loss_map_with_pretrained.png) | ![](src/cnn_project/assets/acc_map_with_pretrained.png) |
+|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map_no_petrained.png) | ![](src/cnn_project/assets/acc_map_no_pretrained.png) |
+|ShuffleNetMNIST (ShuffleNet pretrained)| ![](src/cnn_project/assets/loss_map_with_petrained.png) | ![](src/cnn_project/assets/acc_map_with_pretrained.png) |
 
 ---
 
