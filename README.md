@@ -130,6 +130,14 @@ python inference.py   --model_path checkpoints/SimpleModel.pt   --image_path ima
 
 ---
 
+## Visualization features map
+
+```bash
+python show_features_map.py   --model_path checkpoints/SimpleModel.pt   --image_path image_test/img_1.jpg
+```
+
+---
+
 ## Notes
 - Model architecture is defined in `models/SimpleModel.py`
 - Dataset loader is implemented in `datasets/MyDataset.py`
