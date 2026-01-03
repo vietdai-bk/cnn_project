@@ -11,9 +11,15 @@ The project is designed to be **simple, clean, and easy to extend**, suitable fo
 
 Result training with MNIST
 
-| Loss | Accuracy |
-|------|-------------|
-| ![](src/cnn_project/assets/loss_map.png) | ![](src/cnn_project/assets/acc_map.png) |
+| Models | Loss | Accuracy |
+|--------|------|-------------|
+|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map.png) | ![](src/cnn_project/assets/acc_map.png) |
+
+Result training with Fruits datasets
+| Models | Loss | Accuracy |
+|--------|------|-------------|
+|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map_no_pretrained.png) | ![](src/cnn_project/assets/acc_map_no_pretrained.png) |
+|ShuffleNetMNIST (ShuffleNet pretrained)| ![](src/cnn_project/assets/loss_map_with_pretrained.png) | ![](src/cnn_project/assets/acc_map_with_pretrained.png) |
 
 ---
 
@@ -96,11 +102,11 @@ pip install -r requirements.txt
 ## Training
 
 ```bash
-python train.py   --dataset path/to/dataset   --epoch number/of/epochs  --checkpoint_folder checkpoints --batch_size num/batchsize   --lr learing rate   --SGD
+python train.py   --dataset path/to/dataset   --epoch number/of/epochs  --checkpoint_folder checkpoints --batch_size num/batchsize   --lr learing rate  --pretrained
 ```
 Example:
 ```
-python train.py --dataset mnist_dataset/trainingSet  --epoch 10 --batch_size 64 --lr 1e-4 --SGD
+python train.py --dataset mnist_dataset/trainingSet  --epoch 10 --batch_size 64 --lr 1e-4
 ```
 
 ### Training Arguments
@@ -111,8 +117,9 @@ python train.py --dataset mnist_dataset/trainingSet  --epoch 10 --batch_size 64 
 | `--epoch` | Number of training epochs |
 | `--batch_size` | Batch size |
 | `--lr` | Learning rate |
-| `--SGD` | Use SGD optimizer (default is Adam) |
 | `--checkpoint_folder` | Model trained save here |
+| `--pretrained` | Use pretrained (ShuffleNet) model |
+
 
 ---
 
@@ -145,8 +152,8 @@ python show_features_map.py   --model_path checkpoints/SimpleModel.pt   --image_
 ---
 
 ## Notes
-- Model architecture is defined in `models/SimpleModel.py`
-- Dataset loader is implemented in `datasets/MyDataset.py`
+- Model architecture is defined in `models/model.py`
+- Dataset loader is implemented in `datasets/data.py`
 - The project can be easily adapted to other datasets by changing the dataset directory structure
 
 ---
