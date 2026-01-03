@@ -9,6 +9,12 @@ This repository implements a **complete image classification pipeline** using Py
 
 The project is designed to be **simple, clean, and easy to extend**, suitable for MNIST-style datasets or custom image classification tasks.
 
+Result training with MNIST
+
+| Loss | Accuracy |
+|------|-------------|
+| ![](src/cnn_project/assets/loss_map.png) | ![](src/cnn_project/assets/acc_map.png) |
+
 ---
 
 ## Model Architecture
