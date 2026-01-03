@@ -10,4 +10,3 @@ def show_data(data):
         axis[i].grid(False)
         axis[i].axis('off')
     plt.show()
-

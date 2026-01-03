@@ -1,9 +1,11 @@
 import torch
 from datasets import MyDataset
 from models import SimpleModel
+from utils import show_data
 from torch.utils.data import DataLoader, Subset
 import torch.optim as optim
 import torch.nn as nn
+from torchvision import transforms
 from tqdm import tqdm
 from sklearn.model_selection import train_test_split
 import argparse
@@ -15,6 +17,7 @@ parser.add_argument("--dataset", type=str)
 parser.add_argument("--batch_size", type=int, default=32)
 parser.add_argument("--checkpoint_folder", type=str, default="checkpoints")
 parser.add_argument("--lr", type=float, default=1e-3)
+parser.add_argument("--agm", action="store_true")
 parser.add_argument("--epoch", type=int, default=10)
 parser.add_argument("--SGD", action="store_true")
 
@@ -77,13 +80,27 @@ def valid(model, test_loader):
 
 args = parser.parse_args()
 
-dataset = MyDataset(args.dataset)
+if args.agm:
+    transform = transforms.Compose([
+        transforms.RandomAffine(
+            degrees=10,
+            translate=(0.1, 0.1),
+            scale=(0.9, 1.1)
+        ),
+    ])
+else:
+    transform = None
+
+dataset = MyDataset(args.dataset, transform=transform)
 
 train_data, test_data = split_data(dataset)
+in_c = train_data[0][0].shape[0]
+show_data(train_data)
+show_data(test_data)
 train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=args.batch_size)
 
-model = SimpleModel()
+model = SimpleModel(in_c=in_c)
 model.to(device)
 if args.SGD:
     optimizer = optim.SGD(model.parameters(), lr=args.lr)
@@ -98,4 +115,4 @@ torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
 
 valid(model, test_loader)
 
-# run: python train.py --dataset ../../mnist_dataset/trainingSet  --epoch 5 --batch_size 64 --lr 1e-4 --SGD
+# run: python train.py --dataset dataset/train  --epoch 10 --batch_size 64 --lr 1e-4
