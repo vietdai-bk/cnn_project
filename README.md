@@ -173,6 +173,15 @@ python compare_latency.py
 
 ---
 
+## Deploy test with Gradio
+
+Run this scripts:
+```bash
+python app.py
+```
+
+---
+
 ## Notes
 - Model architecture is defined in `models/model.py`
 - Dataset loader is implemented in `datasets/data.py`
