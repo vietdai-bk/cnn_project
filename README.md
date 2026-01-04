@@ -1,4 +1,4 @@
-# Simple Image Classification Model (MNIST-style)
+# Simple Image Classification Model
 
 ## Overview
 This repository implements a **complete image classification pipeline** using PyTorch, including:
@@ -18,12 +18,12 @@ Result training with MNIST
 Result training with Fruits datasets
 | Models | Loss | Accuracy |
 |--------|------|-------------|
-|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map_no_pretrained.png) | ![](src/cnn_project/assets/acc_map_no_pretrained.png) |
-|ShuffleNetMNIST (ShuffleNet pretrained)| ![](src/cnn_project/assets/loss_map_with_pretrained.png) | ![](src/cnn_project/assets/acc_map_with_pretrained.png) |
+|SimpleModel (Custom model)| ![](src/cnn_project/assets/loss_map_no_petrained.png) | ![](src/cnn_project/assets/acc_map_no_pretrained.png) |
+|ShuffleNet (ShuffleNet pretrained)| ![](src/cnn_project/assets/loss_map_with_petrained.png) | ![](src/cnn_project/assets/acc_map_with_pretrained.png) |
 
 ---
 
-## Model Architecture
+## SimpleModel Architecture
 
 The model architecture is summarized using **torchsummary**, showing layer-wise output shapes and parameter counts.
 
@@ -43,17 +43,18 @@ The model architecture is summarized using **torchsummary**, showing layer-wise 
               ReLU-8           [-1, 64, 14, 14]               0
          MaxPool2d-9             [-1, 64, 7, 7]               0
         ConvBlock-10             [-1, 64, 7, 7]               0
-          Dropout-11                 [-1, 3136]               0
-           Linear-12                   [-1, 10]          31,370
+AdaptiveAvgPool2d-11             [-1, 64, 3, 3]               0
+          Dropout-12                  [-1, 576]               0
+           Linear-13                   [-1, 10]           5,770
 ================================================================
-Total params: 50,378
-Trainable params: 50,378
+Total params: 24,778
+Trainable params: 24,778
 Non-trainable params: 0
 ----------------------------------------------------------------
 Input size (MB): 0.00
-Forward/backward pass size (MB): 1.03
-Params size (MB): 0.19
-Estimated Total Size (MB): 1.22
+Forward/backward pass size (MB): 1.01
+Params size (MB): 0.09
+Estimated Total Size (MB): 1.11
 ----------------------------------------------------------------
 ```
 
