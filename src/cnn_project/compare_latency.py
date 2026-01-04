@@ -41,20 +41,20 @@ if __name__ == "__main__":
     print("Device:", device)
 
     models = {
-        "SimpleCNN": SimpleModel(in_c=1, num_classes=10),
-        # "ShuffleNet": ShuffleNet(num_classes=10),
+        "SimpleCNN": SimpleModel(in_c=3, num_classes=10),
+        "ShuffleNet": ShuffleNet(num_classes=10),
     }
 
     input_sizes = [224]
 
     for name, model in models.items():
         model.to(device)
-        summary(model, input_size=(1, 224, 224))
+        summary(model, input_size=(3, 224, 224))
         print(f"\nModel: {name}")
         for s in input_sizes:
             latency = measure_latency(
                 model,
-                input_size=(1, 1, s, s),
+                input_size=(1, 3, s, s),
                 device=device
             )
             print(f"Input {s}x{s}: {latency:.2f} ms")

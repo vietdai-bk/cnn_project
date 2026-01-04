@@ -100,6 +100,7 @@ dataset = MyDataset(args.dataset, transform=transform)
 
 train_data, test_data = split_data(dataset)
 in_c = train_data[0][0].shape[0]
+print(in_c)
 # show_data(train_data)
 # show_data(test_data)
 train_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True)
@@ -166,4 +167,4 @@ else:
 
 valid(model, test_loader)
 
-# run: python train.py --dataset dataset/train  --epoch 10 --batch_size 64 --lr 1e-4
+# run: python train.py --dataset fruits_dataset/train  --epoch 100 --batch_size 64 --lr 1e-3 --pretrained --num_classes 6

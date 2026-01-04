@@ -34,9 +34,9 @@ in_c = test_data[0][0].shape[0]
 test_loader = DataLoader(test_data, batch_size=args.batch_size)
 
 if args.pretrained:
-    model = ShuffleNet(in_c)
+    model = ShuffleNet(num_classes=6)
 else:
-    model = SimpleModel(in_c)
+    model = SimpleModel(in_c, num_classes=6)
 model.eval()
 model.load_state_dict(torch.load(args.model_path, map_location=device, weights_only=True))
 model.to(device)
@@ -52,4 +52,4 @@ if args.cfm:
     plt.title("Confusion Matrix")
     plt.show()
 
-# run: python test.py --test_data ../../mnist_dataset/trainingSet --model_path checkpoints/SimpleModel.pt --acc --cfm
+# run: python test.py --test_data fruits_dataset/valid --model_path checkpoints/ShuffleNet.pt --acc --cfm --pretrained

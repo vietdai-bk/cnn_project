@@ -1,33 +1,54 @@
-from models import SimpleModel
+from models import SimpleModel, ShuffleNet
 from PIL import Image
 import torch
 import matplotlib.pyplot as plt
 import torchvision.transforms as T
 import argparse
+from torchsummary import summary
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_path", type=str)
 parser.add_argument("--image_path", type=str)
+parser.add_argument("--pretrained", action="store_true")
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = SimpleModel()
-model.eval()
 
-def infer(model_path, im_path):
+def infer(model, model_path, im_path, classes=None):
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
     model.to(device)
-    im = Image.open(im_path).convert("L")
-    im_tensor = T.ToTensor()(im)
-    im_tensor = im_tensor.to(device)
-    out = model(im_tensor.unsqueeze(0))
-    pred = out.argmax(dim=1)
-    plt.imshow(im, cmap='gray')
-    plt.title(f"Pred: {pred.item()}")
-    plt.axis(False)
+
+    transform = T.Compose([
+        T.Resize((224, 224)),
+        T.ToTensor()
+    ])
+
+    im = Image.open(im_path).convert("RGB")
+    im_tensor = transform(im).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        out = model(im_tensor)
+        pred = out.argmax(dim=1)
+    
+    if classes:
+        pred = classes[pred.item()]
+    else:
+        pred = pred.item()
+
+    plt.imshow(im)
+    plt.title(f"Pred: {pred}")
+    plt.axis("off")
     plt.show()
+
     
 args = parser.parse_args()
-infer(args.model_path, args.image_path)
+classes = ["freshapples", "freshbanana", "freshoranges", "rottenapples", "rottenbanana", "rottenorange"]
+if args.pretrained:
+    model = ShuffleNet(num_classes=6).to(device)
+else:
+    model = SimpleModel(in_c=3, num_classes=6).to(device)
+    
+summary(model, input_size=(3, 224, 224))
+infer(model, args.model_path, args.image_path, classes)
 
-# run: python inference.py --model_path checkpoints/SimpleModel.pt --image_path image_test/img_1.jpg
+# run: python inference.py --model_path checkpoints/ShuffleNet.pt --image_path image_test/test2.png --pretrained

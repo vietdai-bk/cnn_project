@@ -32,22 +32,11 @@ class SimpleModel(nn.Module):
         return x
     
 class ShuffleNet(nn.Module):
-    def __init__(self, in_c=1, num_classes=10):
+    def __init__(self, num_classes=10):
         super().__init__()
         self.backbone = models.shufflenet_v2_x0_5(
             weights = models.ShuffleNet_V2_X0_5_Weights.IMAGENET1K_V1
         )
-        conv1 = self.backbone.conv1[0]
-        new_conv1 = nn.Conv2d(
-            in_channels=in_c,
-            out_channels=conv1.out_channels,
-            kernel_size=conv1.kernel_size,
-            stride=conv1.stride,
-            padding=conv1.padding,
-            bias=False
-        )
-        new_conv1.weight.data = conv1.weight.data.mean(dim=1, keepdim=True)
-        self.backbone.conv1[0] = new_conv1
         self.backbone.fc = nn.Linear(self.backbone.fc.in_features, num_classes)
     def forward(self, x):
         return self.backbone(x)

@@ -30,7 +30,7 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         path, label = self.samples[idx]
-        img = Image.open(path).convert("L")
+        img = Image.open(path).convert("RGB")
 
         if self.transform:
             img = self.transform(img)
