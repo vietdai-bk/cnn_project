@@ -88,7 +88,7 @@ def valid(model, test_loader):
 
 args = parser.parse_args()
 
-if args.agm:
+if args.agm or args.pretrained:
     transform = transforms.Compose([
         transforms.Resize((224,224)),
         transforms.ToTensor(),
@@ -109,8 +109,6 @@ if args.pretrained:
     model = ShuffleNet(in_c=in_c, num_classes=args.num_classes)
     for p in model.backbone.parameters():
         p.requires_grad = False
-    for p in model.backbone.conv1.parameters():
-        p.requires_grad = True
     for p in model.backbone.fc.parameters():
         p.requires_grad = True
 else:
@@ -153,18 +151,18 @@ if args.pretrained:
 else:
     torch.save(model.state_dict(),f'{args.checkpoint_folder}/SimpleModel.pt')
 
-plt.plot(all_cost_loss)
-plt.title("Loss Map")
-plt.xlabel("Epoch")
-plt.ylabel("Loss")
-plt.savefig('loss_map_with_petrained.png')
-plt.show()
-plt.plot(all_cost_acc)
-plt.title("Accuracy Map")
-plt.xlabel("Epoch")
-plt.ylabel("Accuracy")
-plt.savefig('acc_map_with_pretrained.png')
-plt.show()
+# plt.plot(all_cost_loss)
+# plt.title("Loss Map")
+# plt.xlabel("Epoch")
+# plt.ylabel("Loss")
+# plt.savefig('loss_map_with_petrained.png')
+# plt.show()
+# plt.plot(all_cost_acc)
+# plt.title("Accuracy Map")
+# plt.xlabel("Epoch")
+# plt.ylabel("Accuracy")
+# plt.savefig('acc_map_with_pretrained.png')
+# plt.show()
 
 valid(model, test_loader)
 

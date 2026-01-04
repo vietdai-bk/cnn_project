@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     models = {
         "SimpleCNN": SimpleModel(in_c=1, num_classes=10),
-        "ShuffleNet": ShuffleNet(num_classes=10),
+        # "ShuffleNet": ShuffleNet(num_classes=10),
     }
 
     input_sizes = [224]
