@@ -6,4 +6,6 @@ __pycache__/
 *.pyc
 *.pyo
 pixi.lock
-models/
+dataset/
+fruits_dataset/
+model_architecture.py
