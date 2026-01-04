@@ -1,4 +1,4 @@
-# Simple Image Classification Model (MNIST-style)
+# Simple Image Classification Model
 
 ## Overview
 This repository implements a **complete image classification pipeline** using PyTorch, including:
