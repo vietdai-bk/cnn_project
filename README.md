@@ -152,6 +152,27 @@ python show_features_map.py   --model_path checkpoints/SimpleModel.pt   --image_
 
 ---
 
+## Model Comparison
+
+Run this scripts to compare latency between SimpleCNN and ShuffleNet model.
+
+```bash
+python compare_latency.py
+```
+
+| Metric                    | ShuffleNet            | SimpleCNN            |
+|---------------------------|-----------------------|----------------------|
+| Input size                | 224 × 224             | 224 × 224            |
+| Inference time            | 8.02 ms               | 0.68 ms              |
+| Total parameters          | 351,610               | 24,778               |
+| Trainable parameters      | 351,610               | 24,778               |
+
+**Notes:**
+- **SimpleCNN** has significantly fewer parameters and much faster inference time, making it suitable for resource-constrained environments such as edge devices or CPU-only systems.
+- **ShuffleNet** is designed for mobile efficiency and provides better feature representation, but at the cost of higher inference time and model complexity.
+
+---
+
 ## Notes
 - Model architecture is defined in `models/model.py`
 - Dataset loader is implemented in `datasets/data.py`
