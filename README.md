@@ -9,6 +9,9 @@ This repository implements a **complete image classification pipeline** using Py
 
 The project is designed to be **simple, clean, and easy to extend**, suitable for MNIST-style datasets or custom image classification tasks.
 
+[Link to Fruits Datasets](https://drive.google.com/file/d/136V12dGDcGYIIQVYz5r-CptqNG5CF4r1/view?usp=sharing)  
+[Link to MNIST Dataset](https://drive.google.com/file/d/19fJqhgfoQ21mY21_8BFd3AvDYpBYCHqK/view?usp=sharing)  
+
 Result training with MNIST
 
 | Models | Loss | Accuracy |
